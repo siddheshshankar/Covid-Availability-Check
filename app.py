@@ -5,8 +5,8 @@ import numpy as np
 import pandas as pd
 from datetime import datetime, date, timedelta
 import streamlit as st
+from fake_useragent import UserAgent
 
-from json import JSONDecodeError
 # Application
 st.markdown("<h1 style='text-align: center; color: red;'>CoWin Availability Status</h1>", unsafe_allow_html=True)
 pin = st.text_input("PIN Code")
@@ -105,13 +105,13 @@ if st.checkbox("Submit"):
     range_dates = [lookup_start_date + timedelta(days=day) for day in range(delta)]
     date_range = [x.strftime('%d-%m-%Y') for x in range_dates]
     
-
+    ua = UserAgent()
+    header = {'User-Agent':str(ua.chrome)}
     data_list = []
     for date in date_range:
-        response = requests.get(f"https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByPin?pincode={pincodes}&date={date}")
-        st.write(response)
+        response = requests.get(f"https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByPin?pincode={pincodes}&date={date}", headers=header)
         read_json = response.json()
-        st.write(read_json)
+ 
         if 'Forbidden' in read_json.values():
           print(f'Message is forbidden, fetch is being blocked for PIN: {pincodes} and Date: {date} - {read_json}')
         elif [] in read_json.values():
