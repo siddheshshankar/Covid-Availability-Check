@@ -17,7 +17,7 @@ age = st.selectbox('Age limit',('18-45', '45+'))
 
 st.error(f'Cross origin resource sharing issue')
 st.info("check out this [link](https://github.com/siddheshshankar/Covid-availability-check/blob/main/app.py) and try running it in your local machine")
-"""
+""""
 if age == '18-45':
     age_select = 18
 else:
@@ -31,14 +31,6 @@ def convert_time(date_str):
 
 # Get centers/hospitals
 def get_centers(read_json, fee_type: str, age_limit: int, start_time: datetime, finish_time: datetime, availability:str):
-      """
-      @param read_json: Json variable
-      @availability: If vaccines are in stock
-      @fee_type: Free or paid
-      @age_limit: 18 or 45
-      @start_time: Time for vaccine to start
-      @finish_time: Time for vaccine to end
-      """
 
       centers = pd.DataFrame(read_json.get('centers'))
 
@@ -140,4 +132,4 @@ if st.checkbox("Submit"):
             st.warning(f'No vaccination centres available for PIN: {pincodes} on given dates')
     except ValueError:
         st.warning(f'No vaccination centres available for PIN: {pincodes} on given dates')
-"""
+""""
