@@ -81,7 +81,7 @@ def get_centers(read_json, fee_type: str, age_limit: int, start_time: datetime, 
 if st.checkbox("Submit"):
     start_date = start_date.strftime("%Y-%m-%d")
     end_date = end_date.strftime("%Y-%m-%d")
-    pincodes = [int(pin)]
+    pincodes = int(pin)
     availability = 'all'
     fee_type = fee
     age_limit = age_select
@@ -108,8 +108,7 @@ if st.checkbox("Submit"):
 
     data_list = []
     for date in date_range:
-        for pincode in pincodes:
-        response = requests.get(f"https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByPin?pincode={pincode}&date={date}")
+        response = requests.get(f"https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByPin?pincode={pincodes}&date={date}")
         try:
             read_json = response.json()
         except JSONDecodeError:
@@ -117,9 +116,9 @@ if st.checkbox("Submit"):
             os._exit(1)
             
         if 'Forbidden' in read_json.values():
-          print(f'Message is forbidden, fetch is being blocked for PIN: {pincode} and Date: {date} - {read_json}')
+          print(f'Message is forbidden, fetch is being blocked for PIN: {pincodes} and Date: {date} - {read_json}')
         elif [] in read_json.values():
-          print(f'Fetch successful, no vaccination centres available for PIN: {pincode} and Date: {date}  - {read_json}')
+          print(f'Fetch successful, no vaccination centres available for PIN: {pincodes} and Date: {date}  - {read_json}')
         else:
             try:
                 data = get_centers(read_json, fee_type, age_limit, start_time, finish_time, availability)
@@ -138,6 +137,6 @@ if st.checkbox("Submit"):
             st.write(f"District: {data_set['district_name'][0]}")
             st.dataframe(data_set1.assign(hack='').set_index('hack'), width=4000, height=600)
         except KeyError:
-            st.warning(f'No vaccination centres available for PIN: {pincode} on given dates')
+            st.warning(f'No vaccination centres available for PIN: {pincodes} on given dates')
     except ValueError:
-        st.warning(f'No vaccination centres available for PIN: {pincode} on given dates')
+        st.warning(f'No vaccination centres available for PIN: {pincodes} on given dates')
