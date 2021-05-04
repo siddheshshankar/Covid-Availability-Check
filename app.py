@@ -20,7 +20,7 @@ if age == '18-45':
 else:
     age_select = 45
 
-if st.button("Submit"):
+if st.checkbox("Submit"):
     start_date = start_date.strftime("%Y-%m-%d")
     end_date = end_date.strftime("%Y-%m-%d")
     pincodes = [int(pin)]
