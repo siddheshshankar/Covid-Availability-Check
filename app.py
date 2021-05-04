@@ -17,8 +17,7 @@ age = st.selectbox('Age limit',('18-45', '45+'))
 
 st.error(f'Cross origin resource sharing issue')
 st.info("check out this [link](https://github.com/siddheshshankar/Covid-availability-check/blob/main/app.py) and try running it in your local machine")
-os._exit(1)
-
+"""
 if age == '18-45':
     age_select = 18
 else:
@@ -141,3 +140,4 @@ if st.checkbox("Submit"):
             st.warning(f'No vaccination centres available for PIN: {pincodes} on given dates')
     except ValueError:
         st.warning(f'No vaccination centres available for PIN: {pincodes} on given dates')
+"""
