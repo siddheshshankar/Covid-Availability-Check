@@ -15,6 +15,10 @@ end_date = st.date_input("Lookup End Date")
 fee = st.selectbox('Fee Type',('Paid', 'Free', 'both'))
 age = st.selectbox('Age limit',('18-45', '45+'))
 
+st.error(f'Cross origin resource sharing issue')
+st.info("check out this [link](https://github.com/siddheshshankar/Covid-availability-check/blob/main/app.py) and try running it in your local machine")
+os._exit(1)
+
 if age == '18-45':
     age_select = 18
 else:
@@ -110,10 +114,6 @@ if st.checkbox("Submit"):
     data_list = []
     for date in date_range:
         response = requests.get(f"https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByPin?pincode={pincodes}&date={date}", headers=header)
-        st.write(response)
-        st.write(type(response))
-        if response == "<Response [403]>":
-            st.write('True')
         read_json = response.json()
  
         if 'Forbidden' in read_json.values():
