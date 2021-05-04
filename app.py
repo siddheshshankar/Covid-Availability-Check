@@ -6,7 +6,7 @@ import pandas as pd
 from datetime import datetime, date, timedelta
 import streamlit as st
 
-
+from json import JSONDecodeError
 # Application
 st.markdown("<h1 style='text-align: center; color: red;'>CoWin Availability Status</h1>", unsafe_allow_html=True)
 pin = st.text_input("PIN Code")
@@ -20,41 +20,14 @@ if age == '18-45':
 else:
     age_select = 45
 
-if st.checkbox("Submit"):
-    start_date = start_date.strftime("%Y-%m-%d")
-    end_date = end_date.strftime("%Y-%m-%d")
-    pincodes = [int(pin)]
-    availability = 'all'
-    fee_type = fee
-    age_limit = age_select
-    start = None
-    end = None
-
-    lookup_start_date = date(int(start_date[0:4]), int(start_date[5:7]), int(start_date[8:]))  # YYYY, m, dd
-    lookup_end_date = date(int(end_date[0:4]), int(end_date[5:7]), int(end_date[8:]))  # YYYY, m, dd
-
-
-    delta = (lookup_end_date - lookup_start_date).days + 1
-    range_dates = [lookup_start_date + timedelta(days=day) for day in range(delta)]
-    date_range = [x.strftime('%d-%m-%Y') for x in range_dates]
-
-
-    def convert_time(date_str):
+# Convert time function
+def convert_time(date_str):
       time_value = datetime.strptime(date_str, '%I:%M%p').time()
       return time_value
+    
 
-    if start:
-      start_time = datetime.strptime(start, '%I:%M%p').time()
-    else:
-      start_time = start
-
-    if end:
-      finish_time = datetime.strptime(end, '%I:%M%p').time()
-    else:
-      finish_time = end
-
-
-    def get_centers(read_json, fee_type: str, age_limit: int, start_time: datetime, finish_time: datetime, availability:str):
+# Get centers/hospitals
+def get_centers(read_json, fee_type: str, age_limit: int, start_time: datetime, finish_time: datetime, availability:str):
       """
       @param read_json: Json variable
       @availability: If vaccines are in stock
@@ -103,12 +76,46 @@ if st.checkbox("Submit"):
 
       session_center.reset_index(drop=True, inplace=True)
       return session_center
+    
+
+if st.checkbox("Submit"):
+    start_date = start_date.strftime("%Y-%m-%d")
+    end_date = end_date.strftime("%Y-%m-%d")
+    pincodes = [int(pin)]
+    availability = 'all'
+    fee_type = fee
+    age_limit = age_select
+    start = None
+    end = None
+
+    lookup_start_date = date(int(start_date[0:4]), int(start_date[5:7]), int(start_date[8:]))  # YYYY, m, dd
+    lookup_end_date = date(int(end_date[0:4]), int(end_date[5:7]), int(end_date[8:]))  # YYYY, m, dd
+
+    if start:
+        start_time = datetime.strptime(start, '%I:%M%p').time()
+    else:
+        start_time = start
+
+    if end:
+        finish_time = datetime.strptime(end, '%I:%M%p').time()
+    else:
+        finish_time = end
+        
+    delta = (lookup_end_date - lookup_start_date).days + 1
+    range_dates = [lookup_start_date + timedelta(days=day) for day in range(delta)]
+    date_range = [x.strftime('%d-%m-%Y') for x in range_dates]
+    
 
     data_list = []
     for date in date_range:
-      for pincode in pincodes:
+        for pincode in pincodes:
         response = requests.get(f"https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByPin?pincode={pincode}&date={date}")
-        read_json = response.json()
+        try:
+            read_json = response.json()
+        except JSONDecodeError:
+            st.warning(f'Please try after sometime. Load on the server.')
+            os._exit(1)
+            
         if 'Forbidden' in read_json.values():
           print(f'Message is forbidden, fetch is being blocked for PIN: {pincode} and Date: {date} - {read_json}')
         elif [] in read_json.values():
