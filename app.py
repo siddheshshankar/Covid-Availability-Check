@@ -109,9 +109,9 @@ if st.checkbox("Submit"):
     data_list = []
     for date in date_range:
         response = requests.get(f"https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByPin?pincode={pincodes}&date={date}")
-        print(response)
+        st.write(response)
         read_json = response.json()
-        print(read_json)
+        st.write(read_json)
         if 'Forbidden' in read_json.values():
           print(f'Message is forbidden, fetch is being blocked for PIN: {pincodes} and Date: {date} - {read_json}')
         elif [] in read_json.values():
