@@ -111,6 +111,9 @@ if st.checkbox("Submit"):
     for date in date_range:
         response = requests.get(f"https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByPin?pincode={pincodes}&date={date}", headers=header)
         st.write(response)
+        st.write(type(response))
+        if response == "<Response [403]>":
+            st.write('True')
         read_json = response.json()
  
         if 'Forbidden' in read_json.values():
