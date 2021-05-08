@@ -28,6 +28,14 @@ def convert_time(date_str):
 
 # Get centers/hospitals
 def get_centers(read_json, fee_type: str, age_limit: int, start_time: datetime, finish_time: datetime, availability:str):
+      """
+      @param read_json: Json variable
+      @availability: If vaccines are in stock
+      @fee_type: Free or paid
+      @age_limit: 18 or 45
+      @start_time: Time for vaccine to start
+      @finish_time: Time for vaccine to end
+      """
 
       centers = pd.DataFrame(read_json.get('centers'))
 
